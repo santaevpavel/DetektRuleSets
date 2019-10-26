@@ -1,0 +1,8 @@
+ext.versions = [
+        detektVersion: "1.1.1"
+]
+
+ext.libraries = [
+        detektApi: "io.gitlab.arturbosch.detekt:detekt-api:$versions.detektVersion",
+        detektTest: "io.gitlab.arturbosch.detekt:detekt-test:$versions.detektVersion"
+]
