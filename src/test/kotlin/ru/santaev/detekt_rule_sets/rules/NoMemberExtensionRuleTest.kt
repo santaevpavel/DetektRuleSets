@@ -2,16 +2,11 @@ package ru.santaev.detekt_rule_sets.rules
 
 import io.gitlab.arturbosch.detekt.test.assertThat
 import io.gitlab.arturbosch.detekt.test.lint
-import org.junit.Before
 import org.junit.Test
 
 class NoMemberExtensionRuleTest {
 
     private val rule = NoMemberExtensionRule()
-
-    @Before
-    fun setUp() {
-    }
 
     @Test
     fun `should find class member extension function`() {
