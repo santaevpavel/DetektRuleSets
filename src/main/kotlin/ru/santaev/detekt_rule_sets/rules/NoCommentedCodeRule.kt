@@ -3,12 +3,12 @@ package ru.santaev.detekt_rule_sets.rules
 import io.gitlab.arturbosch.detekt.api.*
 import org.jetbrains.kotlin.com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.psi.*
-import ru.santaev.detekt_rule_sets.utils.KtFileParser
-import ru.santaev.detekt_rule_sets.utils.line
+import ru.santaev.detekt_rule_sets.utils.KtElementParser
+import ru.santaev.detekt_rule_sets.utils.log
 
-class NoCommentedCodeRule : Rule() {
+class NoCommentedCodeRule(config: Config) : Rule(config) {
 
-    private val kotlinParser = KtFileParser()
+    private val kotlinParser = KtElementParser()
     override val issue = Issue(
         id = javaClass.simpleName,
         severity = Severity.CodeSmell,
@@ -18,13 +18,7 @@ class NoCommentedCodeRule : Rule() {
 
     override fun visitComment(comment: PsiComment) {
         super.visitComment(comment)
-        val ktFile = kotlinParser.parseString(uncomment(comment))
-        val visitor = KtElementCountCalculatorVisitor()
-        visitor.visitKtFile(ktFile)
-        val codeFactor = visitor.ktElements.toDouble() / ktFile.text.split(" ", "\n").size
-        println("codeFactor ${visitor.ktElements} $codeFactor")
-
-        if (codeFactor > CODE_FACTOR_THRESHOLD) {
+        if (shouldCommentBeDeleted(comment)) {
             report(createReport(comment))
         }
     }
@@ -47,12 +41,31 @@ class NoCommentedCodeRule : Rule() {
         }
     }
 
+    private fun shouldCommentBeDeleted(comment: PsiComment): Boolean {
+        val ktFile = kotlinParser.parseString(uncomment(comment))
+        val ktElements = KtElementCountCalculatorVisitor().let { visitor ->
+            visitor.visitKtElement(ktFile)
+            visitor.ktElements
+        }
+        val codeFactor = ktElements.toDouble() / ktFile.text.split(" ", "\n").size
+        log("codeFactor $ktElements $codeFactor")
+
+        return codeFactor > CODE_FACTOR_THRESHOLD && !isAllowedByWhitelistedWords(comment)
+    }
+
+    private fun isAllowedByWhitelistedWords(comment: PsiComment): Boolean {
+        val allowWhitelistedWords = ruleSetConfig.valueOrDefault(ALLOW_TODO_FIX_IT_CONFIG_KEY, false)
+        return allowWhitelistedWords && WHITELISTED_WORDS.any { comment.text.contains(it, ignoreCase = true) }
+    }
+
     companion object {
         private const val MULTILINE_COMMENT_START = "/*"
         private const val MULTILINE_COMMENT_END = "*/"
         private const val SINGLE_LINE_COMMENT_START = "//"
-        private const val CODE_FACTOR_THRESHOLD = 0.01
+        private const val CODE_FACTOR_THRESHOLD = 0.05
         private const val MULTILINE_COMMENT_TOKE_TYPE_CODE = 12
+        private const val ALLOW_TODO_FIX_IT_CONFIG_KEY = "allowToDoAndFixIt"
+        private val WHITELISTED_WORDS = listOf("todo", "fixit")
     }
 }
 
@@ -62,8 +75,21 @@ private class KtElementCountCalculatorVisitor : KtTreeVisitorVoid() {
 
     override fun visitKtElement(element: KtElement) {
         super.visitKtElement(element)
-        if (element !is KtPackageDirective && element !is KtImportList) {
+        if (!IGNORE_LIST.contains(element::class)) {
+            log("visit $element ${element::class.simpleName} ${element.text}")
             ktElements++
         }
+    }
+
+    companion object {
+        private val IGNORE_LIST = listOf(
+            KtPackageDirective::class,
+            KtImportList::class,
+            KtReferenceExpression::class,
+            KtBlockExpression::class,
+            KtBinaryExpression::class,
+            KtNameReferenceExpression::class,
+            KtOperationReferenceExpression::class
+        )
     }
 }
