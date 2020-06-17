@@ -1,10 +1,7 @@
 package ru.santaev.detekt_rule_sets.rules
 
 import io.gitlab.arturbosch.detekt.api.*
-import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.TreeElementVisitor
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import ru.santaev.detekt_rule_sets.utils.IMPLICIT_PARAMETER_NAME
 import ru.santaev.detekt_rule_sets.utils.line
 

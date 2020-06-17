@@ -53,7 +53,7 @@ class ComplexSingleExpressionFunctionRuleTest {
     }
 
     @Test
-    fun `should not find multiple calls that small then max number of calls`() {
+    fun `should NOT find multiple calls that small then max number of calls`() {
         val code =
             """
                 class Foo : Serializable() {
@@ -67,7 +67,7 @@ class ComplexSingleExpressionFunctionRuleTest {
     }
 
     @Test
-    fun `should not find simple raw string as single expression function`() {
+    fun `should NOT find simple raw string as single expression function`() {
         val code =
             """
                 class Foo : Serializable() {
@@ -81,13 +81,31 @@ class ComplexSingleExpressionFunctionRuleTest {
     }
 
     @Test
-    fun `should not find simple single line single expression function`() {
+    fun `should NOT find simple single line single expression function`() {
         val code =
             """
                 class Foo : Serializable() {
 
                     fun tooooooLongFunctionName() =
                         "TooooooLongString ${'$'}LongVariable1 ${'$'}LongVariable2"
+                }
+            """
+        val findings = rule.lint(code)
+
+        assertThat(findings).hasSize(0)
+    }
+
+    @Test
+    fun `should NOT find issue on function with block body`() {
+        val code =
+            """
+                class Foo : Serializable() {
+
+                    fun bar() : String {
+                        return buildString {
+                            append("Bar")
+                        }
+                    }
                 }
             """
         val findings = rule.lint(code)

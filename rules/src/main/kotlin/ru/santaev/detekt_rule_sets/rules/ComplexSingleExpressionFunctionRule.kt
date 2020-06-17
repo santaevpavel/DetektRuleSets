@@ -28,7 +28,7 @@ class ComplexSingleExpressionFunctionRule : Rule() {
         val numberOfCalls = getCallsCount(bodyExpression)
         if (isMultiline) {
             report(createReport(function))
-        } else if (numberOfCalls > MAX_CALL_CHAINS_IN_SINGLE_EXPRESSION){
+        } else if (numberOfCalls > MAX_CALL_CHAINS_IN_SINGLE_EXPRESSION) {
             report(createReport(function))
         }
     }
@@ -48,7 +48,7 @@ class ComplexSingleExpressionFunctionRule : Rule() {
         }
     }
 
-    private class CallsCounterVisitor: KtTreeVisitorVoid() {
+    private class CallsCounterVisitor : KtTreeVisitorVoid() {
 
         var countOfChainCall: Int = 0
 
