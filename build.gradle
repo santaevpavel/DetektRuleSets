@@ -1,30 +1,9 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id "io.gitlab.arturbosch.detekt" version '1.2.1' apply false
 }
 
 apply from: "dependencies.gradle"
 
 group 'ru.santaev'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-    jcenter()
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation libraries.detektApi
-    testImplementation libraries.detektTest
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
+version '0.1.0'
