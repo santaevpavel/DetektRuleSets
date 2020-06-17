@@ -1,5 +1,5 @@
 ext.versions = [
-        detektVersion: "1.1.1"
+        detektVersion: "1.10.0-RC1"
 ]
 
 ext.libraries = [

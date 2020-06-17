@@ -1,9 +1,10 @@
 plugins {
+    id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm'
 }
 
 
-group 'ru.santaev'
+group 'ru.santaev.detekt-rule-set'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
@@ -25,4 +26,16 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = 'rules'
+            version = version
+
+            from components.java
+        }
+    }
 }
