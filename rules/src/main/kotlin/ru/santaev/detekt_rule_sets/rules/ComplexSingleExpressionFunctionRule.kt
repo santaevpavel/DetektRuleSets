@@ -2,6 +2,7 @@ package ru.santaev.detekt_rule_sets.rules
 
 import io.gitlab.arturbosch.detekt.api.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isFunctionalExpression
 import ru.santaev.detekt_rule_sets.utils.line
 
 class ComplexSingleExpressionFunctionRule : Rule() {
@@ -19,6 +20,7 @@ class ComplexSingleExpressionFunctionRule : Rule() {
 
     override fun visitNamedFunction(function: KtNamedFunction) {
         super.visitNamedFunction(function)
+        if (!isExpressionFunction(function)) return
         val bodyExpression = function.bodyExpression ?: return
 
         val startLine = bodyExpression.node.firstChildNode.line(function.containingFile)
@@ -46,6 +48,10 @@ class ComplexSingleExpressionFunctionRule : Rule() {
             expression.accept(visitor)
             visitor.countOfChainCall
         }
+    }
+
+    private fun isExpressionFunction(function: KtNamedFunction): Boolean{
+        return function.bodyExpression != null && function.bodyBlockExpression == null
     }
 
     private class CallsCounterVisitor : KtTreeVisitorVoid() {

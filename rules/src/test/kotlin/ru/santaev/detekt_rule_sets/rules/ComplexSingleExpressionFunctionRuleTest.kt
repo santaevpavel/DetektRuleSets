@@ -44,7 +44,7 @@ class ComplexSingleExpressionFunctionRuleTest {
             """
                 class Foo : Serializable() {
 
-                    fun bar(): Boolean = Factory.instance(memberFunction(this.otherFunction())
+                    fun bar(): Boolean = Factory.instance(memberFunction(this.otherFunction()))
                 }
             """
         val findings = rule.lint(code)
@@ -106,6 +106,20 @@ class ComplexSingleExpressionFunctionRuleTest {
                             append("Bar")
                         }
                     }
+                }
+            """
+        val findings = rule.lint(code)
+
+        assertThat(findings).hasSize(0)
+    }
+
+    @Test
+    fun `should NOT find issue on interface function`() {
+        val code =
+            """
+                interface Foo {
+
+                    fun bar()
                 }
             """
         val findings = rule.lint(code)
