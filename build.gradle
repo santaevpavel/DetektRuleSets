@@ -7,3 +7,10 @@ apply from: "dependencies.gradle"
 
 group 'ru.santaev'
 version '0.1.0'
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+}

@@ -14,6 +14,7 @@ repositories {
             includeGroup "org.jetbrains.kotlinx"
         }
     }
+    maven { url "https://jitpack.io" }
 }
 
 detekt {
