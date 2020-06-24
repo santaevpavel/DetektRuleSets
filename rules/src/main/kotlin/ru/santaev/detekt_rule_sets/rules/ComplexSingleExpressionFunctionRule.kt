@@ -7,10 +7,6 @@ import ru.santaev.detekt_rule_sets.utils.line
 
 class ComplexSingleExpressionFunctionRule : Rule() {
 
-    companion object {
-        private const val MAX_CALL_CHAINS_IN_SINGLE_EXPRESSION = 2
-    }
-
     override val issue = Issue(
         id = javaClass.simpleName,
         severity = Severity.CodeSmell,
@@ -62,5 +58,9 @@ class ComplexSingleExpressionFunctionRule : Rule() {
             super.visitCallExpression(expression)
             countOfChainCall++
         }
+    }
+
+    companion object {
+        private const val MAX_CALL_CHAINS_IN_SINGLE_EXPRESSION = 2
     }
 }

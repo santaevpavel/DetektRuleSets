@@ -8,13 +8,18 @@ import ru.santaev.detekt_rule_sets.utils.log
 
 class NoCommentedCodeRule(config: Config) : Rule(config) {
 
-    private val kotlinParser = KtElementParser()
     override val issue = Issue(
         id = javaClass.simpleName,
         severity = Severity.CodeSmell,
         description = "Do not keep commented code",
         debt = Debt.FIVE_MINS
     )
+    private val kotlinParser = KtElementParser()
+
+    override fun visitKtElement(element: KtElement) {
+        createReport(element)
+        super.visitKtElement(element)
+    }
 
     override fun visitComment(comment: PsiComment) {
         super.visitComment(comment)
@@ -23,6 +28,13 @@ class NoCommentedCodeRule(config: Config) : Rule(config) {
         }
     }
 
+    private fun createReport(comment: KtElement): Finding {
+        return CodeSmell(
+            issue = issue,
+            entity = Entity.from(comment),
+            message = "Remove this comment or add TODO/FIXIT label to comment"
+        )
+    }
     private fun createReport(comment: PsiComment): Finding {
         return CodeSmell(
             issue = issue,
@@ -48,7 +60,6 @@ class NoCommentedCodeRule(config: Config) : Rule(config) {
             visitor.ktElements
         }
         val codeFactor = ktElements.toDouble() / ktFile.text.split(" ", "\n").size
-        log("codeFactor $ktElements $codeFactor")
 
         return codeFactor > CODE_FACTOR_THRESHOLD && !isAllowedByWhitelistedWords(comment)
     }
@@ -76,7 +87,6 @@ private class KtElementCountCalculatorVisitor : KtTreeVisitorVoid() {
     override fun visitKtElement(element: KtElement) {
         super.visitKtElement(element)
         if (!IGNORE_LIST.contains(element::class)) {
-            log("visit $element ${element::class.simpleName} ${element.text}")
             ktElements++
         }
     }

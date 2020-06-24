@@ -1,5 +1,6 @@
+@file:Suppress("MatchingDeclarationName")
 
-@Suppress("MagicNumber", "MatchingDeclarationName")
+@Suppress("MagicNumber")
 class SampleClass {
 
     private val error = "NullPointerException"

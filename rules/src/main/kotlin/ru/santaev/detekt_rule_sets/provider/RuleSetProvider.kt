@@ -10,12 +10,12 @@ import ru.santaev.detekt_rule_sets.rules.NoMemberExtensionRule
 
 class DetektRuleSetProvider : RuleSetProvider {
 
-    override val ruleSetId: String = "SantaevRuleSet"
+    override val ruleSetId: String = "extrarules"
 
     override fun instance(config: Config): RuleSet {
         return RuleSet(
-            ruleSetId,
-            listOf(
+            id = ruleSetId,
+            rules = listOf(
                 NoMemberExtensionRule(),
                 LambdaImplicitParameterUsingRule(),
                 ComplexSingleExpressionFunctionRule(),

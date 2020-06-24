@@ -16,6 +16,10 @@ repositories {
     }
 }
 
+detekt {
+    config = files("config/detekt/detekt.yml")
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     detektPlugins "ru.santaev.detekt-rule-set:rules:$rootProject.version"
