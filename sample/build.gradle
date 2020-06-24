@@ -7,6 +7,7 @@ group 'ru.santaev.detekt-rule-set'
 version '1.0-SNAPSHOT'
 
 repositories {
+    maven { url "https://jitpack.io" }
     mavenLocal()
     mavenCentral()
     jcenter {
@@ -14,7 +15,6 @@ repositories {
             includeGroup "org.jetbrains.kotlinx"
         }
     }
-    maven { url "https://jitpack.io" }
 }
 
 detekt {
@@ -24,6 +24,7 @@ detekt {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     // detektPlugins "ru.santaev.detekt-rule-set:rules:$rootProject.version"
+    // detektPlugins "com.github.santaevpavel:detekt-rule-sets:0.1.0"
 }
 
 compileKotlin {
