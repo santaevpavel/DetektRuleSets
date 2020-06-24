@@ -1,3 +1,3 @@
-rootProject.name = 'detekt_rule_sets'
+rootProject.name = 'detekt_rule_set'
 include 'rules'
 include 'sample'

@@ -1,4 +1,4 @@
-package ru.santaev.detekt_rule_sets.utils
+package ru.santaev.detekt_rule_set.utils
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback

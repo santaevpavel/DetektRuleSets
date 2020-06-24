@@ -1,9 +1,9 @@
-package ru.santaev.detekt_rule_sets.rules
+package ru.santaev.detekt_rule_set.rules
 
 import io.gitlab.arturbosch.detekt.api.*
 import org.jetbrains.kotlin.psi.*
-import ru.santaev.detekt_rule_sets.utils.IMPLICIT_PARAMETER_NAME
-import ru.santaev.detekt_rule_sets.utils.line
+import ru.santaev.detekt_rule_set.utils.IMPLICIT_PARAMETER_NAME
+import ru.santaev.detekt_rule_set.utils.line
 
 class LambdaImplicitParameterUsingRule : Rule() {
 

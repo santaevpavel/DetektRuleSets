@@ -1,9 +1,8 @@
-package ru.santaev.detekt_rule_sets.rules
+package ru.santaev.detekt_rule_set.rules
 
 import io.gitlab.arturbosch.detekt.api.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isFunctionalExpression
-import ru.santaev.detekt_rule_sets.utils.line
+import ru.santaev.detekt_rule_set.utils.line
 
 class ComplexSingleExpressionFunctionRule : Rule() {
 

@@ -1,4 +1,4 @@
-package ru.santaev.detekt_rule_sets.rules
+package ru.santaev.detekt_rule_set.rules
 
 import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.test.TestConfig

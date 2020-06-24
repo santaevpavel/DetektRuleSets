@@ -1,10 +1,9 @@
-package ru.santaev.detekt_rule_sets.rules
+package ru.santaev.detekt_rule_set.rules
 
 import io.gitlab.arturbosch.detekt.api.*
 import org.jetbrains.kotlin.com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.psi.*
-import ru.santaev.detekt_rule_sets.utils.KtElementParser
-import ru.santaev.detekt_rule_sets.utils.log
+import ru.santaev.detekt_rule_set.utils.KtElementParser
 
 class NoCommentedCodeRule(config: Config) : Rule(config) {
 

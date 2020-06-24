@@ -1,4 +1,4 @@
-package ru.santaev.detekt_rule_sets.utils
+package ru.santaev.detekt_rule_set.utils
 
 private const val DEBUG = false
 
