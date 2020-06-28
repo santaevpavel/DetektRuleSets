@@ -365,5 +365,42 @@ class NoCommentedCodeRuleTest {
 
         assertThat(findings).hasSize(0)
     }
+
+    @Test
+    fun `should NOT find issue if simple sentence in comment`() {
+        val code =
+            """
+                class Foo : Serializable() {
+
+                    fun bar(): Boolean {
+                        val lambda: (Int) -> Boolean = {
+                            it % 2 == 0 // Do nothing
+                        }
+                    }
+                }
+            """
+        val findings = rule.lint(code)
+
+        assertThat(findings).hasSize(0)
+    }
+
+    @Test
+    fun `should NOT find issue if long sentence in comment`() {
+        val code =
+            """
+                class Foo : Serializable() {
+
+                    fun bar(): Boolean {
+                        // do not use lambda for calling method bar()
+                        val lambda: (Int) -> Boolean = {
+                            it % 2 == 0
+                        }
+                    }
+                }
+            """
+        val findings = rule.lint(code)
+
+        assertThat(findings).hasSize(0)
+    }
 }
 

@@ -4,6 +4,7 @@ import io.gitlab.arturbosch.detekt.api.*
 import org.jetbrains.kotlin.com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.psi.*
 import ru.santaev.detekt_rule_set.utils.KtElementParser
+import ru.santaev.detekt_rule_set.utils.log
 
 class NoCommentedCodeRule(config: Config) : Rule(config) {
 
@@ -15,11 +16,6 @@ class NoCommentedCodeRule(config: Config) : Rule(config) {
     )
     private val kotlinParser = KtElementParser()
 
-    override fun visitKtElement(element: KtElement) {
-        createReport(element)
-        super.visitKtElement(element)
-    }
-
     override fun visitComment(comment: PsiComment) {
         super.visitComment(comment)
         if (shouldCommentBeDeleted(comment)) {
@@ -27,13 +23,6 @@ class NoCommentedCodeRule(config: Config) : Rule(config) {
         }
     }
 
-    private fun createReport(comment: KtElement): Finding {
-        return CodeSmell(
-            issue = issue,
-            entity = Entity.from(comment),
-            message = "Remove this comment or add TODO/FIXIT label to comment"
-        )
-    }
     private fun createReport(comment: PsiComment): Finding {
         return CodeSmell(
             issue = issue,
@@ -58,8 +47,12 @@ class NoCommentedCodeRule(config: Config) : Rule(config) {
             visitor.visitKtElement(ktFile)
             visitor.ktElements
         }
-        val codeFactor = ktElements.toDouble() / ktFile.text.split(" ", "\n").size
-
+        val words = ktFile.text
+            .split(" ", "\n")
+            .filter { it.isNotBlank() }
+            .size
+        val codeFactor = ktElements.toDouble() / words
+        log("codeFactor $codeFactor")
         return codeFactor > CODE_FACTOR_THRESHOLD && !isAllowedByWhitelistedWords(comment)
     }
 
@@ -72,7 +65,7 @@ class NoCommentedCodeRule(config: Config) : Rule(config) {
         private const val MULTILINE_COMMENT_START = "/*"
         private const val MULTILINE_COMMENT_END = "*/"
         private const val SINGLE_LINE_COMMENT_START = "//"
-        private const val CODE_FACTOR_THRESHOLD = 0.05
+        private const val CODE_FACTOR_THRESHOLD = 0.2
         private const val MULTILINE_COMMENT_TOKE_TYPE_CODE = 12
         private const val ALLOW_TODO_FIX_IT_CONFIG_KEY = "allowToDoAndFixIt"
         private val WHITELISTED_WORDS = listOf("todo", "fixit")
@@ -86,6 +79,7 @@ private class KtElementCountCalculatorVisitor : KtTreeVisitorVoid() {
     override fun visitKtElement(element: KtElement) {
         super.visitKtElement(element)
         if (!IGNORE_LIST.contains(element::class)) {
+            log("visit $element ${element::class.simpleName} ${element.text}")
             ktElements++
         }
     }
@@ -98,7 +92,11 @@ private class KtElementCountCalculatorVisitor : KtTreeVisitorVoid() {
             KtBlockExpression::class,
             KtBinaryExpression::class,
             KtNameReferenceExpression::class,
-            KtOperationReferenceExpression::class
+            KtOperationReferenceExpression::class,
+            KtContainerNodeForControlStructureBody::class,
+            KtForExpression::class,
+            KtDoWhileExpression::class,
+            KtValueArgumentList::class
         )
     }
 }
