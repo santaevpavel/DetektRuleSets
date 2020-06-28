@@ -1,6 +1,6 @@
 # DetektRuleSets
 
-[![](https://jitpack.io/v/santaevpavel/detekt-rule-sets.svg)](https://jitpack.io/#santaevpavel/detekt-rule-sets)
+[![](https://jitpack.io/v/santaevpavel/detekt-rule-set.svg)](https://jitpack.io/#santaevpavel/detekt-rule-set)
 
 Extra `detekt` rules for supporting `Kotlin Coding Convention` and `Android Kotlin Style`.    
 
