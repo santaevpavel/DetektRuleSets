@@ -9,7 +9,7 @@ class LambdaImplicitParameterUsingRuleTest {
     private val rule = LambdaImplicitParameterUsingRule()
 
     @Test
-    fun `should find lambda implicit parameter using in multiline lambda`() {
+    fun `should REPORT lambda implicit parameter using in multiline lambda`() {
         val code =
             """
                 class Foo : Serializable() {
@@ -27,7 +27,7 @@ class LambdaImplicitParameterUsingRuleTest {
     }
 
     @Test
-    fun `should not find lambda implicit parameter using in single line lambda`() {
+    fun `should NOT REPORT lambda implicit parameter using in single line lambda`() {
         val code =
             """
                 class Foo : Serializable() {
@@ -43,7 +43,7 @@ class LambdaImplicitParameterUsingRuleTest {
     }
 
     @Test
-    fun `should not find lambda implicit parameter using in lambda`() {
+    fun `should NOT REPORT lambda implicit parameter using in lambda`() {
         val code =
             """
                 class Foo : Serializable() {
@@ -61,13 +61,57 @@ class LambdaImplicitParameterUsingRuleTest {
     }
 
     @Test
-    fun `should not find lambda implicit parameter using in function`() {
+    fun `should NOT REPORT lambda implicit parameter using in function`() {
         val code =
             """
                 class Foo : Serializable() {
 
                     fun bar(it: Int): Int {
                         return it + it
+                    }
+                }
+            """
+        val findings = rule.lint(code)
+
+        assertThat(findings).isEmpty()
+    }
+
+    @Test
+    fun `should REPORT lambda implicit parameter using in function call with lambda`() {
+        val code =
+            """
+                class Foo : Serializable() {
+
+                    fun bar(it: Int): Int {
+                        getObservable()
+                            .async()
+                            .handleError()
+                            .map {
+                                it.isEmpty()
+                            }
+                            .subscribe()
+                    }
+                }
+            """
+        val findings = rule.lint(code)
+
+        assertThat(findings).hasSize(1)
+    }
+
+    @Test
+    fun `should NOT REPORT lambda implicit parameter using when it argument used in nested lambda`() {
+        val code =
+            """
+                class Foo : Serializable() {
+
+                    fun bar(it: Int): Int {
+                        getObservable()
+                            .async()
+                            .handleError()
+                            .map { 
+                                listOf("a", "b", "c").map { it.length } 
+                            }
+                            .subscribe()
                     }
                 }
             """
