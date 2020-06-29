@@ -392,6 +392,7 @@ class NoCommentedCodeRuleTest {
 
                     fun bar(): Boolean {
                         // do not use lambda for calling method bar()
+                        // MediaStore
                         val lambda: (Int) -> Boolean = {
                             it % 2 == 0
                         }

@@ -49,8 +49,10 @@ class NoCommentedCodeRule(config: Config) : Rule(config) {
         }
         val words = ktFile.text
             .split(" ", "\n")
+            .asSequence()
             .filter { it.isNotBlank() }
-            .size
+            .filter { word -> word.all { it.isLetter() } }
+            .count()
         val codeFactor = ktElements.toDouble() / words
         log("codeFactor $codeFactor")
         return codeFactor > CODE_FACTOR_THRESHOLD && !isAllowedByWhitelistedWords(comment)
@@ -65,7 +67,7 @@ class NoCommentedCodeRule(config: Config) : Rule(config) {
         private const val MULTILINE_COMMENT_START = "/*"
         private const val MULTILINE_COMMENT_END = "*/"
         private const val SINGLE_LINE_COMMENT_START = "//"
-        private const val CODE_FACTOR_THRESHOLD = 0.2
+        private const val CODE_FACTOR_THRESHOLD = 0.5
         private const val MULTILINE_COMMENT_TOKE_TYPE_CODE = 12
         private const val ALLOW_TODO_FIX_IT_CONFIG_KEY = "allowToDoAndFixIt"
         private val WHITELISTED_WORDS = listOf("todo", "fixit")
@@ -96,7 +98,8 @@ private class KtElementCountCalculatorVisitor : KtTreeVisitorVoid() {
             KtContainerNodeForControlStructureBody::class,
             KtForExpression::class,
             KtDoWhileExpression::class,
-            KtValueArgumentList::class
+            KtValueArgumentList::class,
+            KtValueArgument::class
         )
     }
 }
