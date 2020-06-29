@@ -7,7 +7,7 @@ import ru.santaev.detekt_rule_set.utils.line
 
 class LambdaImplicitParameterUsingRule : Rule() {
 
-    private val implicitParameterCounterVisitor = ImplicitParameterCounterVisitor()
+    private val implicitParameterCounter = ImplicitParameterCounter()
 
     override val issue = Issue(
         id = javaClass.simpleName,
@@ -19,11 +19,7 @@ class LambdaImplicitParameterUsingRule : Rule() {
     override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
         super.visitLambdaExpression(lambdaExpression)
         val hasSpecifiedParameter = lambdaExpression.functionLiteral.hasParameterSpecification()
-        val implicitParameterUsingCount = implicitParameterCounterVisitor.let { visitor ->
-            visitor.reset()
-            lambdaExpression.accept(visitor, null)
-            visitor.count
-        }
+        val implicitParameterUsingCount = implicitParameterCounter.calculate(lambdaExpression)
         if (isMultiline(lambdaExpression) &&
             hasSpecifiedParameter.not() &&
             implicitParameterUsingCount > 0
@@ -46,10 +42,10 @@ class LambdaImplicitParameterUsingRule : Rule() {
         )
     }
 
-    private class ImplicitParameterCounterVisitor: KtTreeVisitorVoid() {
+    private class ImplicitParameterCounter: KtTreeVisitorVoid() {
 
-        var count: Int = 0
-            private set
+        private var count: Int = 0
+        private var rootElement: KtElement? = null
 
         override fun visitReferenceExpression(expression: KtReferenceExpression) {
             super.visitReferenceExpression(expression)
@@ -58,8 +54,17 @@ class LambdaImplicitParameterUsingRule : Rule() {
             }
         }
 
-        fun reset() {
+        override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
+            if (rootElement == lambdaExpression) {
+                super.visitLambdaExpression(lambdaExpression)
+            }
+        }
+
+        fun calculate(expression: KtElement): Int {
             count = 0
+            rootElement = expression
+            expression.accept(this)
+            return count
         }
     }
 }
